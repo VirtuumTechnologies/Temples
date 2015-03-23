@@ -10,15 +10,6 @@ import com.virtuumtech.android.googleplaces.search.RequestStatus;
 import com.virtuumtech.android.googleplaces.search.TextSearch;
 import com.virtuumtech.android.googleplaces.search.SearchUpdateListener;
 
-
-
-
-
-
-
-
-
-
 import android.app.Activity;
 import android.app.ListActivity;
 import android.content.Intent;
