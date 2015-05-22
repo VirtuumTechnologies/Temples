@@ -3,7 +3,8 @@ package com.virtuumtech.temples;
 import java.util.List;
 
 import com.google.android.gms.common.GooglePlayServicesUtil;
-import com.virtuumtech.android.googleplaces.LocationUpdateListener;
+import com.virtuumtech.android.googleplaces.GPConstants;
+import com.virtuumtech.android.googleplaces.listener.LocationUpdateListener;
 import com.virtuumtech.android.googleplaces.MyAddress;
 import com.virtuumtech.android.googleplaces.MyLocation;
 
@@ -93,7 +94,7 @@ public class Temples extends Activity implements LocationUpdateListener {
 	// This is call back procedure to update the address detail of given location. Implementation of interface LocationUpdateListener, 
 	@Override
 	public void onAddressesUpdate(int status, List<Address> addresses) {
-		if (status == MyAddress.SUCCESS) {
+		if (status == GPConstants.SUCCESS) {
 			Log.i(TAG,"Address retrieved");
 			
 			Intent intent = new Intent(this,TemplesList.class);

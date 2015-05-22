@@ -3,12 +3,16 @@ package com.virtuumtech.temples;
 
 import java.util.ArrayList;
 
-import com.virtuumtech.android.googleplaces.PlaceSummary;
+import com.virtuumtech.android.googleplaces.PlaceDetails;
+import com.virtuumtech.android.googleplaces.PlacesList;
 import com.virtuumtech.android.googleplaces.search.NearBySearch;
+import com.virtuumtech.android.googleplaces.search.Places;
 import com.virtuumtech.android.googleplaces.search.RadarSearch;
 import com.virtuumtech.android.googleplaces.search.RequestStatus;
 import com.virtuumtech.android.googleplaces.search.TextSearch;
-import com.virtuumtech.android.googleplaces.search.SearchUpdateListener;
+import com.virtuumtech.android.googleplaces.listener.PhotoUpdate;
+import com.virtuumtech.android.googleplaces.listener.PlaceDetailsUpdate;
+import com.virtuumtech.android.googleplaces.listener.SearchResultsUpdate;
 
 import android.app.Activity;
 import android.app.ListActivity;
@@ -25,13 +29,14 @@ import android.widget.GridView;
 import android.widget.ListView;
 import android.widget.TextView;
 
-public class TemplesList extends Activity implements SearchUpdateListener {
+public class TemplesList extends Activity implements PhotoUpdate, PlaceDetailsUpdate, SearchResultsUpdate {
 
 	private static final String TAG = "TempleList";
 	private Location mLocation;
 	private String mLocationName;
 	private String APPKEY;
 	NearBySearch nearBySearch;
+	Places places;
 	ArrayList<String> templeNames;
 	ListView listView;
 
@@ -57,11 +62,11 @@ public class TemplesList extends Activity implements SearchUpdateListener {
 	
 	public void getSearchResult() {
 		Log.v(TAG,"Inside getSearchResult");
-		nearBySearch.setLocation(mLocation);
+/*		nearBySearch.setLocation(mLocation);
 		nearBySearch.setTypes("hindu_temple");
 		nearBySearch.setRankby("distance");
 		nearBySearch.getPlaces();
-		
+*/		
 	/*	TextSearch textSearch = new TextSearch(this, APPKEY);
 		textSearch.setLocation(mLocation);
 		textSearch.setQuery("Meenakshi Amman Temple");
@@ -73,6 +78,12 @@ public class TemplesList extends Activity implements SearchUpdateListener {
 		radarSearch.setTypes("hospital");
 		radarSearch.setRadius("50000");
 		radarSearch.getPlaces();*/
+		
+		//places = new Places(this,APPKEY,"ChIJG6ve4l0RrjsRbNMN7Xi0WGM");
+		places = new Places(this,APPKEY,"ChIJh2nkYYTFADsRA2co5RxiNPE");
+		places.setWikiDataDownload(true);
+		places.requestPlaceDetails();
+		
 	}
 	
 	@Override
@@ -95,17 +106,17 @@ public class TemplesList extends Activity implements SearchUpdateListener {
 	}
 
 	@Override
-	public void onSearchResultsUpdate(int statusCode, ArrayList<PlaceSummary> listPOIs) {
+	public void onSearchResultsUpdate(int statusCode, ArrayList<PlacesList> listPOIs) {
 		Log.v(TAG,"Inside onSearchResultsUpdate");
 		Log.d(TAG,"Statuscode: "+statusCode+" - "+RequestStatus.getStatusValue(statusCode));
 		
-		PlaceSummary placeSummary;
+		PlacesList placesList;
 		
 		if (statusCode == RequestStatus.OK ) {
 			for (int i = 0; i < listPOIs.size(); i++) {
 				//Log.d(TAG,listPOIs.get(i).toString());
-				placeSummary = listPOIs.get(i);
-				String displayString = placeSummary.getName();
+				placesList = listPOIs.get(i);
+				String displayString = placesList.getName();
 				Log.d(TAG,displayString);
 				templeNames.add(displayString);
 			}
@@ -117,5 +128,30 @@ public class TemplesList extends Activity implements SearchUpdateListener {
 	public void getNextData (View view) {
 		Log.v(TAG,"in getNextData");
 		nearBySearch.getNextPlaces();
+	}
+
+	@Override
+	public void onPlaceDetailsUpdate(int statusCode) {
+		Log.v(TAG,"Inside onPlaceDetailsUpdate");
+		Log.d(TAG,"Statuscode: "+statusCode+" - "+RequestStatus.getStatusValue(statusCode));
+		
+		PlaceDetails placeDetails;
+		if (statusCode == RequestStatus.OK ) {
+			placeDetails = places.getPlaceDetails();
+			if (placeDetails != null) {
+				Log.d(TAG,placeDetails.toString());
+			} else {
+				Log.d(TAG,"No details available for given place id");
+			}
+		} else {
+			Log.d(TAG,"Request Status is failed");
+		}
+		
+	}
+
+	@Override
+	public void onPhotoDownload(int statusCode) {
+		// TODO Auto-generated method stub
+		
 	}
 }
